@@ -1085,8 +1085,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	          // Remove Content-Type if data is undefined
 	          delete requestHeaders[key];
 	        } else {
-	          // Otherwise add header to the request
-	          request.setRequestHeader(key, val);
+						// Otherwise add header to the request
+						// Make headers case senstive.
+						// request.setRequestHeader(key, val);
+						if (request.readyState !== request.OPENED) {
+							throw new Error('Request has not been opened');
+						}
+						request._headers[key] = String(val);
 	        }
 	      });
 	    }
@@ -1283,8 +1288,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  utils.forEach(headers.split('\n'), function parser(line) {
 	    i = line.indexOf(':');
-	    key = utils.trim(line.substr(0, i)).toLowerCase();
-	    val = utils.trim(line.substr(i + 1));
+	    // key = utils.trim(line.substr(0, i)).toLowerCase();
+			key = utils.trim(line.substr(0, i))
+			val = utils.trim(line.substr(i + 1));
 	
 	    if (key) {
 	      if (parsed[key] && ignoreDuplicateOf.indexOf(key) >= 0) {
